@@ -7,11 +7,15 @@ import os
 
 # Setup Chrome options
 options = Options()
-options.add_argument("--headless=new")  # use new headless mode
-options.add_argument("--no-sandbox")  # required in GitHub Actions
-options.add_argument("--disable-dev-shm-usage")  # avoid /dev/shm issues
+options = Options()
+options.add_argument("--headless=new")  # Use new headless mode
+options.add_argument("--no-sandbox")    # Required in GitHub Actions
+options.add_argument("--disable-dev-shm-usage")  # Avoid /dev/shm issues
 options.add_argument("--disable-gpu")
+options.add_argument("--disable-extensions")
+options.add_argument("--remote-allow-origins=*")
 options.add_argument("--window-size=1920,1080")
+driver.set_page_load_timeout(60)  # default is usually 30s
 service = Service(executable_path="/usr/local/bin/chromedriver")
 
 # Launch browser
@@ -44,5 +48,6 @@ if headlines:
 else:
 
     print("❌ No valid headlines found.")
+
 
 
