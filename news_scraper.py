@@ -2,37 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
+# URL of the Times of India homepage
 url = "https://timesofindia.indiatimes.com/"
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.109 Safari/537.36"
-}
 
-response = requests.get(url, headers=headers, timeout=30)
-if response.status_code != 200:
-    raise Exception(f"Failed to fetch page: {response.status_code}")
+# Fetch the page
+response = requests.get(url, timeout=30)
+response.raise_for_status()
 
+# Parse HTML
 soup = BeautifulSoup(response.text, "html.parser")
-headlines = soup.select("h2, h3, .headline, .title")
 
-# Set path to save file on Desktop
+# Find all headline divs
+headline_divs = soup.find_all("div", class_="CRKrj")
+
+headlines = [div.get_text(strip=True) for div in headline_divs if div.get_text(strip=True)]
+
+# Save headlines to a file
 file_path = os.path.join(os.getcwd(), "headlines.txt")
+with open(file_path, "w", encoding="utf-8") as f:
+    for headline in headlines:
+        f.write(headline + "\n")
 
-# Write headlines
-if headlines:
-    with open(file_path, "w", encoding="utf-8") as file:
-        count = 0
-        for h in headlines:
-            text = h.get_text(strip=True)
-            if text:
-                file.write(text + "\n")
-                count += 1
-            if count == 10:  # Only top 10 headlines
-                break
-    print(f"✅ Headlines saved to: {file_path}")
-else:
-
-    print("❌ No valid headlines found.")
-
-
-
-
+print(f"✅ {len(headlines)} headlines saved to: {file_path}")
