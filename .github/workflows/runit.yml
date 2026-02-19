@@ -42,20 +42,13 @@ jobs:
           sudo dpkg -i google-chrome-stable_current_amd64.deb
           sudo apt-get install -f
 
-      - name: Install correct version of chromedriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f1)
-          echo "Chrome Major Version: $CHROME_VERSION"
-          DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
-          echo "Chromedriver Version: $DRIVER_VERSION"
-          wget https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-
+      - name: Setup Chromedriver
+        uses: nanasess/setup-chromedriver@v2.3.0
+        with:
+          chrome-version: stable  # automatically matches your installed Chrome
 
       - name: Run scraper script
-        run: |
-          python news_scraper.py
+        run: python news_scraper.py
 
       - name: Commit and push headlines
         run: |
@@ -67,4 +60,3 @@ jobs:
             git push
           else
             echo "No headlines found or saved."
-          fi
