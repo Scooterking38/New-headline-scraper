@@ -27,8 +27,7 @@ driver.quit()
 headlines = soup.select("h2, h3, .headline, .title")
 
 # Set path to save file on Desktop
-desktop_path = os.path.join(os.path.expanduser("~"), "OneDrive", "Desktop")
-file_path = os.path.join(desktop_path, "headlines.txt")
+file_path = os.path.join(os.getcwd(), "headlines.txt")
 
 # Write headlines
 if headlines:
@@ -45,4 +44,5 @@ if headlines:
 else:
 
     print("❌ No valid headlines found.")
+
 
