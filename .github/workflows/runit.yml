@@ -34,29 +34,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium beautifulsoup4
 
-      - name: Cache Google Chrome and Chromedriver
-        uses: actions/cache@v3
-        with:
-          path: |
-            /usr/local/bin/chromedriver
-            /opt/google/chrome
-          key: ${{ runner.os }}-chrome-${{ hashFiles('**/chromedriver') }}
-          restore-keys: |
-            ${{ runner.os }}-chrome-
-
-      - name: Install Google Chrome and Chromedriver (if cache is missed)
+      - name: Install Google Chrome
         run: |
-          if [ ! -f /usr/local/bin/chromedriver ]; then
-            sudo apt-get update
-            sudo apt-get install -y wget unzip
-            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-            sudo dpkg -i google-chrome-stable_current_amd64.deb
-            sudo apt-get install -f
-            wget https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip
-            unzip chromedriver_linux64.zip
-            sudo mv chromedriver /usr/local/bin/
-            sudo mv google-chrome-stable_current_amd64.deb /opt/google/chrome
-          fi
+          sudo apt-get update
+          sudo apt-get install -y wget curl
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          sudo apt-get install -f
+
+      - name: Install correct version of chromedriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | sed 's/Google Chrome //')
+          DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%%.*})
+          wget https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
 
       - name: Run scraper script
         run: |
