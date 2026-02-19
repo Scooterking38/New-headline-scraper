@@ -1,33 +1,17 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+import requests
 from bs4 import BeautifulSoup
-import time
 import os
 
-# Setup Chrome options
-options = Options()
-options = Options()
-options.add_argument("--headless=new")  # Use new headless mode
-options.add_argument("--no-sandbox")    # Required in GitHub Actions
-options.add_argument("--disable-dev-shm-usage")  # Avoid /dev/shm issues
-options.add_argument("--disable-gpu")
-options.add_argument("--disable-extensions")
-options.add_argument("--remote-allow-origins=*")
-options.add_argument("--window-size=1920,1080")
-driver.set_page_load_timeout(60)  # default is usually 30s
-service = Service(executable_path="/usr/local/bin/chromedriver")
+url = "https://timesofindia.indiatimes.com/"
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.109 Safari/537.36"
+}
 
-# Launch browser
-driver = webdriver.Chrome(service=service, options=options)
-driver.get("https://timesofindia.indiatimes.com/")
-time.sleep(5)  # Wait for page to load
+response = requests.get(url, headers=headers, timeout=30)
+if response.status_code != 200:
+    raise Exception(f"Failed to fetch page: {response.status_code}")
 
-# Parse the page
-soup = BeautifulSoup(driver.page_source, "html.parser")
-driver.quit()
-
-# Find headlines
+soup = BeautifulSoup(response.text, "html.parser")
 headlines = soup.select("h2, h3, .headline, .title")
 
 # Set path to save file on Desktop
@@ -48,6 +32,7 @@ if headlines:
 else:
 
     print("❌ No valid headlines found.")
+
 
 
 
