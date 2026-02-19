@@ -7,7 +7,11 @@ import os
 
 # Setup Chrome options
 options = Options()
-options.add_argument("--headless")  # Run without opening window
+options.add_argument("--headless=new")  # use new headless mode
+options.add_argument("--no-sandbox")  # required in GitHub Actions
+options.add_argument("--disable-dev-shm-usage")  # avoid /dev/shm issues
+options.add_argument("--disable-gpu")
+options.add_argument("--window-size=1920,1080")
 service = Service(executable_path="/usr/local/bin/chromedriver")
 
 # Launch browser
@@ -41,3 +45,4 @@ if headlines:
 else:
 
     print("❌ No valid headlines found.")
+
