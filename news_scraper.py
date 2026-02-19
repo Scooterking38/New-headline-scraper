@@ -8,7 +8,7 @@ import os
 # Setup Chrome options
 options = Options()
 options.add_argument("--headless")  # Run without opening window
-service = Service(executable_path="chromedriver.exe")
+service = Service(executable_path="/usr/local/bin/chromedriver")
 
 # Launch browser
 driver = webdriver.Chrome(service=service, options=options)
@@ -39,4 +39,5 @@ if headlines:
                 break
     print(f"✅ Headlines saved to: {file_path}")
 else:
+
     print("❌ No valid headlines found.")
